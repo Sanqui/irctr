@@ -42,6 +42,11 @@ char* KBD_CHARS[] = {"1234567890-\b\b",
                    "qwertyuiop\n\n\n",
                    "asdfghjkl'=//",
                    "zxcvbnm,.?!@"};
+char* KBD_SHIFT[] = {"1234567890_\b\b",
+                   "QWERTYUIOP\n\n\n",
+                   "ASDFGHJKL\"*\\\\",
+                   "ZXCVBNM<>:;#"};
+
 
 
 u32 key_down;
@@ -76,6 +81,7 @@ int kbd_pos = 0;
 bool kbd_done = false;
 char kbd_input[256] = {};
 char kbd_query[256] = {};
+bool kbd_shift = false;
 
 void kbd_setup(char* query) {
     consoleSelect(&window_input);
@@ -84,6 +90,7 @@ void kbd_setup(char* query) {
     kbd_pos = 0;
     memset(kbd_input, 0, sizeof(kbd_input));
     strcpy(kbd_query, query);
+    kbd_shift = false;
 }
 
 void do_kbd() {
@@ -97,9 +104,17 @@ void do_kbd() {
         if (last_touch.py >= KBD_OFF_TOP) {
             int row = (last_touch.py - KBD_OFF_TOP) / KEY_HEIGHT;
             int col = (last_touch.px - KBD_OFF_LEFT - KBD_FIRST_EXTRA[row]) / KEY_WIDTH;
-            if (row == 4) key = ' ';
+            if (row == 4 && col >= 4) {
+                key = ' ';
+            } else if (row == 4) {
+                kbd_shift = true;
+            }
             else {
-                key = KBD_CHARS[row][col];
+                if (kbd_shift)
+                    key = KBD_SHIFT[row][col];
+                else
+                    key = KBD_CHARS[row][col];
+                kbd_shift = false;
             }
         }
         if (key != '\0') {
