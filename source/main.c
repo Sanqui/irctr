@@ -63,8 +63,8 @@ void get_input() {
     key_down = hidKeysDown();
     key_held = hidKeysHeld();
     key_up = hidKeysUp();
-	last_touch = touch;
-	hidTouchRead(&touch);
+    last_touch = touch;
+    hidTouchRead(&touch);
 }
 
 int sockfd;
@@ -222,13 +222,13 @@ int main(int argc, char **argv)
     memset(&serv_addr, 0, sizeof(serv_addr));
     
     
-	gfxSetDoubleBuffering(GFX_BOTTOM, false);
-	u8* fb = gfxGetFramebuffer(GFX_BOTTOM, GFX_LEFT, NULL, NULL);
-	memcpy(fb, img_keyboard_bgr, img_keyboard_bgr_size);
-	
-	state = STATE_ASK_SERVER;
-	bool connected = false;
-	
+    gfxSetDoubleBuffering(GFX_BOTTOM, false);
+    u8* fb = gfxGetFramebuffer(GFX_BOTTOM, GFX_LEFT, NULL, NULL);
+    memcpy(fb, img_keyboard_bgr, img_keyboard_bgr_size);
+    
+    state = STATE_ASK_SERVER;
+    bool connected = false;
+    
     // Main loop
     while (aptMainLoop())
     {
