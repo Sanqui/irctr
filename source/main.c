@@ -215,7 +215,7 @@ int main(int argc, char **argv)
     }
 
     int n = 0;
-    char recv[4096];
+    char recv[8192];
     char out[1024] = {};
     struct sockaddr_in serv_addr; 
     memset(recv, 0, sizeof(recv));
@@ -234,7 +234,7 @@ int main(int argc, char **argv)
     {
         if (connected) {
             memset(recv, 0, sizeof(recv));
-            n = read(sockfd, recv, 4096);
+            n = read(sockfd, recv, 8192);
             if (n < 0 && errno == EAGAIN) {
             
             } else {
