@@ -5,6 +5,9 @@
 const char* DEFAULT_SERVER = "irc.";
 const char* DEFAULT_NICK = "irctr";
 
+#define SOC_ALIGN       0x1000
+#define SOC_BUFFERSIZE  0x100000
+
 #define STATE_ASK_SERVER 0
 #define STATE_GET_SERVER 1
 #define STATE_ASK_NICK 2
@@ -27,7 +30,8 @@ const char* DEFAULT_NICK = "irctr";
 #include <errno.h>
 #include <arpa/inet.h>
 #include <sys/stat.h>
-#include <fcntl.h> 
+#include <fcntl.h>
+#include <malloc.h>
 
 #include "img_keyboard_bgr.h"
 
@@ -183,8 +187,8 @@ void parse_irc(char* str) {
 
 int main(int argc, char **argv)
 {
-    int state;
-    initCfgu();
+    int state, ret;
+    cfguInit();
     //uint16_t tmp = CFGU_GetConfigInfoBlk2(0x1C, 0xA0000, ds_username);
     //utf16_to_utf8((uint8_t *)ds_username, &tmp, 16);
     gfxInitDefault();
@@ -204,11 +208,9 @@ int main(int argc, char **argv)
         return -1;
     
     
-    Result ret = SOC_Initialize(SOC_buffer, 0x100000);
-    if(ret != 0)
-    {
+    if ((ret = socInit(SOC_buffer, SOC_BUFFERSIZE)) != 0) {
         // need to free the shared memory block if something goes wrong
-        SOC_Shutdown();
+        socExit();
         free(SOC_buffer);
         SOC_buffer = NULL;
         return -1;
@@ -383,9 +385,9 @@ int main(int argc, char **argv)
         
     // Exit services
     gfxExit();
-    exitCfgu();
+    cfguExit();
     
-    ret = SOC_Shutdown();
+    ret = socExit();
     if(ret != 0)
         return -1;
     return 0;
